@@ -30,7 +30,14 @@ from fairseq.logging.meters import StopwatchMeter, TimeMeter
 def main(cfg: DictConfig):
     if isinstance(cfg, Namespace):
         with nvtx.annotate("parse_arguments_second_phase", color="green"):
-            cfg = convert_namespace_to_omegaconf(cfg)
+            #cfg = convert_namespace_to_omegaconf(cfg)
+            # save
+            #with open('cfg.pickle', 'wb') as f:
+            #    pickle.dump(cfg, f, pickle.HIGHEST_PROTOCOL)
+
+            # load
+            with open('cfg.pickle', 'rb') as f:
+                cfg = pickle.load(f)
 
     assert cfg.common_eval.path is not None, "--path required for generation!"
     assert (
