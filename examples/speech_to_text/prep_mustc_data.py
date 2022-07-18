@@ -48,6 +48,11 @@ class MUSTC(Dataset):
     """
 
     SPLITS = ["train", "dev", "tst-COMMON", "tst-HE"]
+    #SPLITS = ["tst-COMMON"]
+    #SPLITS = ["tst-COMMON-100"]
+    #SPLITS = ["tst-COMMON-10"]
+    #SPLITS = ["tst-COMMON-2"]
+    SPLITS = ["tst-COMMON-1"]
     LANGUAGES = ["de", "es", "fr", "it", "nl", "pt", "ro", "ru"]
 
     def __init__(self, root: str, lang: str, split: str) -> None:
