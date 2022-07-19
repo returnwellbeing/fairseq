@@ -90,6 +90,8 @@ def get_symbols_to_strip_from_output(generator):
         return {generator.eos}
 
 def _main_old(cfg: DictConfig, output_file):
+    init_timer = StopwatchMeter()
+    init_timer.start()
     logging.basicConfig(
         format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
@@ -215,6 +217,8 @@ def _main_old(cfg: DictConfig, output_file):
 
     num_sentences = 0
     has_target = True
+    init_timer.stop()
+    
     wps_meter = TimeMeter()
     for sample in progress:
         sample = utils.move_to_cuda(sample) if use_cuda else sample
@@ -401,6 +405,11 @@ def _main_old(cfg: DictConfig, output_file):
 
     logger.info("NOTE: hypothesis and token scores are output in base 2")
     logger.info(
+        "total initialization in {:.1f}s".format(
+            init_timer.sum,
+        )
+    )
+    logger.info(
         "Translated {:,} sentences ({:,} tokens) in {:.1f}s ({:.2f} sentences/s, {:.2f} tokens/s)".format(
             num_sentences,
             gen_timer.n,
@@ -430,7 +439,9 @@ def _main_old(cfg: DictConfig, output_file):
     return scorer
 
 def _main(cfg: DictConfig, output_file):
+    init_timer = StopwatchMeter()
     with nvtx.annotate("initialization", color="blue"):
+        init_timer.start()
         logging.basicConfig(
             format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
             datefmt="%Y-%m-%d %H:%M:%S",
@@ -561,6 +572,7 @@ def _main(cfg: DictConfig, output_file):
     
         num_sentences = 0
         has_target = True
+        init_timer.stop()
 
     wps_meter = TimeMeter()
     with nvtx.annotate("task_inference_samples", color="red"):
@@ -749,6 +761,11 @@ def _main(cfg: DictConfig, output_file):
 
     with nvtx.annotate("print_outputs", color="purple"):
         logger.info("NOTE: hypothesis and token scores are output in base 2")
+        logger.info(
+            "total initialization in {:.1f}s".format(
+                init_timer.sum,
+            )
+        )
         logger.info(
             "Translated {:,} sentences ({:,} tokens) in {:.1f}s ({:.2f} sentences/s, {:.2f} tokens/s)".format(
                 num_sentences,
